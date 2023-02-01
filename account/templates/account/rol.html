@@ -1,0 +1,38 @@
+{% extends 'helpdesk/base.html' %}
+{% load widget_tweaks %}
+
+
+{% block title %}Peran{% endblock title %}
+{% block body %}
+
+{% include 'helpdesk/navbar.html' %}
+{% include 'helpdesk/header.html' %}
+<div class="pcoded-main-container">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Peran</h3>
+                </div>
+                <div class="card-body">
+                    Ada 3 jenis role bagi seorang user, 1) Aparat Desa, 2) Kejari, dan 3) Kejati
+
+                </div>
+                <div class="card-body">
+                    <div class="col-md-6">
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                {% render_field form.rol class="" name="rol" %}
+                            </div>
+                            <input type="submit" class="btn btn-primary" value="Update">
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock body %}

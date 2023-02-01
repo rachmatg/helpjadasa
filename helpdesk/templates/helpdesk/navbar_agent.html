@@ -1,0 +1,87 @@
+<nav class="pcoded-navbar menupos-fixed menu-light brand-blue ">
+    <div class="navbar-wrapper ">
+        <div class="navbar-brand header-logo">
+            <a href="index.html" class="b-brand">
+                <img src="/images/logo.svg" alt="" class="logo images">
+                <img src="/images/logo-icon.svg" alt="" class="logo-thumb images">
+            </a>
+            <a class="mobile-menu" id="mobile-collapse" href="#!"><span></span></a>
+        </div>
+        <div class="navbar-content scroll-div">
+            <ul class="nav pcoded-inner-navbar">
+                <li class="nav-item pcoded-menu-caption">
+                    <label>Selamat Datang @{% if user.is_authenticated %}, {{user.username.title}}.</label>{% endif %}
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'helpdesk:index' %}" class="nav-link"><span class="pcoded-micon"><i
+                                class="feather icon-home"></i></span><span class="pcoded-mtext">Beranda</span></a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'helpdesk:dashboard' %}" class="nav-link"><span class="pcoded-micon"><i
+                                class="feather icon-clipboard"></i></span><span
+                            class="pcoded-mtext">Dashboard</span></a>
+                </li>
+                <li class="nav-item pcoded-hasmenu">
+                    <a href="#!" class="nav-link"><span class="pcoded-micon"><i
+                                class="feather icon-user"></i></span><span class="pcoded-mtext">Akun</span></a>
+                    <ul class="pcoded-submenu">
+                        {% if user.is_anonymous %}
+
+                        <li class=""><a href="{% url 'account:login' %}" class="">Login</a></li>
+                        <li class=""><a href="{% url 'account:create' %}" class="">Register</a></li>
+                        {% endif %}
+                        {% if user.is_authenticated %}
+                        <li class=""><a href="{% url 'account:rol' %}" class="">Peran</a></li>
+                        <li class=""><a href="{% url 'account:edit' %}" class="">Edit</a></li>
+                        <li class=""><a href="{% url 'account:logout' %}" class="">Logout</a></li>
+                        {% endif %}
+                </li>
+
+            </ul>
+            </li>
+
+            {% if user.is_authenticated %}
+            <li class="nav-item pcoded-menu-caption">
+                <label>Pertanyaan</label>
+            </li>
+            <li class="nav-item pcoded-hasmenu">
+                <a href="#!" class="nav-link"><span class="pcoded-micon"><i
+                            class="feather icon-bookmark"></i></span><span class="pcoded-mtext">Pilihan</span></a>
+                <ul class="pcoded-submenu">
+                    <li class=""><a href="{% url 'helpdesk:unassigned' %}" class="">Pertanyaan belum terjawab</a></li>
+                    <li class=""><a href="{% url 'helpdesk:dashboard' %}" class="">Tampilkan pertanyaan untuk saya</a></li>
+            </li>
+            </ul>
+            </li>
+            {% else %}
+            <li class="nav-item pcoded-menu-caption">
+                <label>Pertanyaan</label>
+            </li>
+            <li class="nav-item pcoded-hasmenu">
+                <a href="#!" class="nav-link"><span class="pcoded-micon"><i
+                            class="feather icon-bookmark"></i></span><span class="pcoded-mtext">Pilihan</span></a>
+                <ul class="pcoded-submenu">
+                    <small class="nav-link">Halaman di bawah hanya bisa diakses setelah login. <a class="text-c-blue"
+                            href="{% url 'account:create' %}">Buat Akun.</a></small>
+                    <li class="nav-link">Buat Pertanyaan</li>
+                    <li class="nav-link">Lihat pertanyaan</li>
+                    <li class="nav-link">Buat komentar</li>
+                    <li class="nav-link">Buat jawaban</li>
+            </li>
+            <li class="nav-item pcoded-hasmenu">
+                <a href="#!" class="nav-link"><span class="pcoded-micon">
+                    <i class="feather icon-user"></i></span><span class="pcoded-mtext">Manajemen Pengetahuan</span></a>
+                <ul class="pcoded-submenu">
+                    <li class=""><a href="" class="">Cari Pengetahuan</a></li>
+                    <li class=""><a href="" class="">Input Pengetahuan</a></li>
+                </ul>
+            </li>
+        </ul>
+            </li>
+            {% endif %}
+            
+            
+            </ul>
+        </div>
+    </div>
+</nav>

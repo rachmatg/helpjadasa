@@ -1,0 +1,224 @@
+{% extends 'helpdesk/base.html' %}
+{% load widget_tweaks %}
+
+{% block title %}Detail{% endblock title %}
+
+{% block body %}
+
+
+{% if user.rol.is_agent %}
+<!-- [ navigation menu ] start -->
+{% include 'helpdesk/navbar_agent.html' %}
+<!-- [ navigation menu ] end -->
+{% else %}
+<!-- [ navigation menu ] start -->
+{% include 'helpdesk/navbar.html' %}
+<!-- [ navigation menu ] end -->
+{% endif %}
+
+
+<!-- [ Header ] start -->
+{% include 'helpdesk/header.html' %}
+<!-- [ Header ] end -->
+
+<!-- [ Main Content ] start -->
+<div class="pcoded-main-container">
+    <div class="pcoded-wrapper">
+        <div class="pcoded-content">
+            <div class="pcoded-inner-content">
+                <div class="main-body">
+                    <div class="page-wrapper">
+                        <!-- [ Main Content ] start -->
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <h5>Kode Pertanyan: {{ticket.code}}</h5>
+                                {% if user.rol.is_agent %}
+                                <div class="card ">
+                                    <div class="card-header">
+                                        <h5>Status Pertanyaan</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <form action="{% url 'helpdesk:ticket_decision_handling' ticket.code %}"
+                                            method='POST'>
+                                            {% csrf_token %}
+                                            <div class="form-group">
+                                                <label for="formControlRange">Ubah status pertanyaan supaya Desa tahu bahwa pertanyaannya direspon.</label>
+                                                {% render_field ticket_decision_form.status class="form-control" %}
+                                            </div>
+                                            <input type="submit" value="Simpan">
+                                        </form>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                <hr>
+                                <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                                    <li class="nav-item">
+                                        <a class="nav-link active" id="pills-home-tab" data-toggle="pill"
+                                            href="#pills-home" role="tab" aria-controls="pills-home"
+                                            aria-selected="true">Pertanyaan</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="pills-profile-tab" data-toggle="pill"
+                                            href="#pills-profile" role="tab" aria-controls="pills-profile"
+                                            aria-selected="false">Komentar</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="pills-contact-tab" data-toggle="pill"
+                                            href="#pills-contact" role="tab" aria-controls="pills-contact"
+                                            aria-selected="false">Lampiran</a>
+                                    </li>
+                                </ul>
+                                <div class="tab-content" id="pills-tabContent">
+                                    <div class="tab-pane fade show active" id="pills-home" role="tabpanel"
+                                        aria-labelledby="pills-home-tab">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <h5>Informasi Umum</h5>
+                                                <hr class="mb-5">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <h6 class="mb-5"><span class='text-c-blue'>Tgl</span>:
+                                                            {{ticket.created}}</h6>
+                                                        <h6 class="mb-5"><span class='text-c-blue'>Update</span>:
+                                                            {{ticket.updated}}
+                                                        </h6>
+                                                        <h6 class="mb-5"><span class='text-c-blue'>Status</span>:
+                                                            {{ticket.status}}</h6>
+                                                        <!-- IF AGENT-->
+                                                        {% if ticket.agent %}
+                                                        <h6 class="mb-5"><span class='text-c-blue'>Yang ditugaskan</span>: {{ticket.get_department_display}}</h6>
+                                                        {% else %}
+                                                        <h6 class="mb-5"><span class='text-c-blue'>Yang ditugaskan</span>: Belum ada</h6>
+                                                        {% endif %}
+                                                        <!-- ENDIF -->
+                                                        <h6 class="mb-5"><span class='text-c-blue'>Pernah dieskalasi?</span>:
+                                                            {{ticket.is_escalated}}</h6>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <h6 class="mb-5"><span class='text-c-blue'>Pengirim</span>:
+                                                            {{ticket.owner}}</h6>
+                                                        <h6 class="mb-5"><span class='text-c-blue'>Kejari</span>:
+                                                            {{ticket.department.title }}
+                                                        </h6>
+                                                        <h6 class="mb-5"><span class='text-c-blue'>Kategori</span>:
+                                                            {{ticket.category.title }}</h6>
+                                                        <h6 class="mb-5"><span class='text-c-blue'>Subyek</span>:
+                                                            {{ticket.subject}}</h6>
+                                                        <h6 class="mb-5"><span class='text-c-blue'>Detail</span>:
+                                                            {{ticket.description|safe }}</h6>
+                                                    </div>
+                                                </div>
+                                                <!-- sessions-section end -->
+                                            </div>
+                                            <!-- [ Main Content ] end -->
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="pills-profile" role="tabpanel"
+                                        aria-labelledby="pills-profile-tab">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <h5>Chat (beta)</h5>
+                                                <hr class="mb-5">
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div id="chat_box" class="chat_box">
+                                                            <div class="message">
+                                                                {% if comments %}
+                                                                <hr>
+                                                                {% for comment in comments %}
+                                                                    {% if comment.owner == ticket.owner %}
+                                                                    <div class="row msg_container base_sent">
+                                                                        <div class="col-md-11 col-xs-11">
+                                                                            <div class="messages msg_sent">
+                                                                                <p>{{comment.content|safe }}</p>
+                                                                                <time>Dari: {{comment.owner}}
+                                                                                    ({{comment.created}})
+                                                                                </time>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-1 col-xs-1 avatar">
+                                                                            <img src="/{{ comment.owner.account.image }}" class="img-thumbnail img-responsive ">
+                                                                        </div>
+                                                                    </div>
+                                                                    {% else %}
+                                                                    <div class="row msg_container base_receive">
+                                                                        <div class="col-md-1 col-xs-1 avatar">
+                                                                            <img src="/{{ user.account.image }}" class="img-thumbnail img-responsive ">                                                                        </div>
+                                                                        <div class="col-md-11 col-xs-11">
+                                                                            <div class="messages msg_receive">
+                                                                                <p>{{comment.content|safe }}</p>
+                                                                                <time>Dari: {{comment.owner}}
+                                                                                    ({{comment.created}})
+                                                                                </time>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    {% endif %}
+                                                                {% endfor %}
+                                                                {% else %}
+                                                                Pertanyaan belum ada komentar
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <form
+                                                            action="{% url 'helpdesk:comment_handling' ticket.code request.user.pk %}"
+                                                            method='POST'>
+                                                            {% csrf_token %}
+                                                            <div class="form-group">
+                                                                <p>Tuliskan komentarmu:</p>
+                                                                {% render_field comment_form.content class="form-control" %}
+                                                            </div>
+                                                            <input type="submit" value="Kirim">
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="pills-contact" role="tabpanel"
+                                        aria-labelledby="pills-contact-tab">
+                                        <div class="row">
+                                            <div class="col-xl-12 col-md-6">
+                                                <!--ENCTYPE para los forms con imagenes-->
+                                                <form method='POST' enctype="multipart/form-data">
+                                                    {% csrf_token %}
+                                                    <div class="form-group">
+                                                        <label for="formControlRange">Pilihan file (berupa image):</label>
+                                                        {% render_field attachment_form.image class="form-control" %}
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="formControlRange">Uraian:</label>
+                                                        {% render_field attachment_form.description class="form-control" %}
+                                                    </div>
+                                                    <input class="form-group" type="submit" value="Kirim">
+                                                </form>
+                                            </div>
+                                            <div class="col-xl-3 col-md-6">
+                                                <h5>Lampiran:</h5>
+                                                <div class="card prod-p-card">
+                                                    {% if attachments %}
+                                                    {% for attach in attachments %}
+                                                    <div class="card-body">
+                                                        <img id='attach_img' src="{{attach.image.url}}" alt="">
+                                                        {{attach.description}}
+                                                    </div>
+                                                    {% endfor %}
+                                                    {% else %}
+                                                    <h3>Belum ada lampiran</h3>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock body %}
